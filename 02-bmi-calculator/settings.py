@@ -6,11 +6,13 @@ SWITCH_FONT_SIZE = 18
 CATEGORY_FONT_SIZE = 22
 BUTTON_CORNER_RADIUS = 6
 
-# colors
+# BMI category colors
 COLOR_UNDERWEIGHT = '#4A90E2'
 COLOR_NORMAL = '#50BFAB'
 COLOR_OVERWEIGHT = '#F5A623'
 COLOR_OBESE = '#D0021B'
+
+# UI colors
 GREEN = '#50BFAB'
 DARK_GREEN = '#3A8A7B'
 WHITE = '#F2F2F2'
@@ -39,12 +41,12 @@ POUNDS_PER_KG = 2.20462
 INCHES_PER_FOOT = 12
 CM_PER_INCH = 2.54
 
-# max and min weight
+# Weight limits
 MIN_WEIGHT_KG = 30
 MAX_WEIGHT_KG = 300
 
+# Convert '#RRGGBB' to 0x00BBGGRR format used by Windows DWM API
 def hex_to_dwm(hex_color):
-    """Convert '#RRGGBB' to 0x00BBGGRR format used by Windows DWM API"""
     hex_color = hex_color.lstrip('#')
     r = int(hex_color[0:2], 16)
     g = int(hex_color[2:4], 16)
