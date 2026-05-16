@@ -37,7 +37,6 @@ class App(ctk.CTk):
         UnitSwitch(self,self.metric_bool)
 
 
-        self.mainloop()
     def change_units(self, *args):
         self.height_input.update_text(self.height_int.get())
         self.weight_input.update_weight()
@@ -57,10 +56,13 @@ class App(ctk.CTk):
         except Exception as e:
             print(f"Title bar color error: {e}")
 
+    def run(self):
+        self.mainloop()
+
 class ResultText(ctk.CTkLabel):
     def __init__(self, parent, bmi_string):
         font = ctk.CTkFont(family=FONT,size=MAIN_TEXT_SIZE,weight='bold')
-        super().__init__(master=parent, text= 22.5,font = font,text_color=WHITE,textvariable = bmi_string)
+        super().__init__(master=parent,font = font,text_color=WHITE,textvariable = bmi_string)
         self.grid(column=0, row=0,rowspan=2, sticky='nsew')
 
 class WeightInput(ctk.CTkFrame):
@@ -105,18 +107,22 @@ class WeightInput(ctk.CTkFrame):
             if self.metric_bool.get():
                 amount = 1 if info[1] == 'large' else 0.1
             else:
-                amount = 0.453592 if info[1] == 'large' else 0.453592/16
+                amount = KG_PER_POUND  if info[1] == 'large' else KG_PER_POUND /OUNCES_PER_POUND
 
             if info[0] == 'plus':
-                self.weight_float.set(self.weight_float.get() + amount)
+                new_weight = self.weight_float.get() + amount
             else:
-                self.weight_float.set(self.weight_float.get() - amount)
+                new_weight = self.weight_float.get() - amount
+
+            # weight limit
+            new_weight = max(MIN_WEIGHT_KG, min(MAX_WEIGHT_KG, new_weight))
+            self.weight_float.set(new_weight)
 
         if self.metric_bool.get():
             self.output_string.set(f'{round(self.weight_float.get(),2)} kg')
         else:
-            raw_ounces = self.weight_float.get() * 2.20462 * 16
-            pounds, ounces = divmod(raw_ounces,16)
+            raw_ounces = self.weight_float.get() * POUNDS_PER_KG * OUNCES_PER_POUND
+            pounds, ounces = divmod(raw_ounces,OUNCES_PER_POUND )
             self.output_string.set(f'{int(pounds)}lb {int(ounces)}oz')
 
 class HeightInput(ctk.CTkFrame):
@@ -152,13 +158,12 @@ class HeightInput(ctk.CTkFrame):
             cm = text_string[1:]
             self.output_string.set(f'{meter}.{cm}m')
         else:
-            feet, inches = divmod(amount / 2.54, 12 )
+            feet, inches = divmod(amount / CM_PER_INCH, INCHES_PER_FOOT )
             self.output_string.set(f'{int(feet)}\'{int(inches)}"')
 
 class UnitSwitch(ctk.CTkLabel):
     def __init__(self, parent,metric_bool):
         super().__init__(master = parent,text='metric',text_color=DARK_GREEN,font = ctk.CTkFont(family=FONT,size=SWITCH_FONT_SIZE,weight='bold'))
-        self.grid(column=0,row=0,sticky='nsew',padx=10, pady=10)
         self.place(relx=0.98, rely=0.01, anchor='ne')
 
         self.metric_bool = metric_bool
@@ -173,4 +178,5 @@ class UnitSwitch(ctk.CTkLabel):
             self.configure(text='imperial')
 
 if __name__ == '__main__':
-    App()
+    app = App()
+    app.run()
