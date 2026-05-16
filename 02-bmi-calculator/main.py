@@ -84,9 +84,9 @@ class App(ctk.CTk):
 
     # Reset all values to defaults
     def reset(self):
-        self.metric_bool.set(DEFAULT_METRIC)
         self.height_int.set(DEFAULT_HEIGHT_CM)
         self.weight_float.set(DEFAULT_WEIGHT_KG)
+        self.metric_bool.set(DEFAULT_METRIC)
 
     def run(self):
         self.mainloop()
