@@ -16,13 +16,19 @@ class App(ctk.CTk):
 
         # layout
         self.columnconfigure(0, weight=1)
-        self.rowconfigure((0,1,2,3), weight=1,uniform='a')
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1, uniform='a')  # reset/metric buttons
+        self.rowconfigure(1, weight=3, uniform='a')  # BMI value
+        self.rowconfigure(2, weight=1, uniform='a')  # Category
+        self.rowconfigure(3, weight=2, uniform='a')  # Weight input
+        self.rowconfigure(4, weight=2, uniform='a')  # Height input
 
         # data
         self.metric_bool = ctk.BooleanVar(value=True)
         self.height_int = ctk.IntVar(value=170)
         self.weight_float = ctk.DoubleVar(value=65)
         self.bmi_string = ctk.StringVar()
+        self.category_string = ctk.StringVar()
         self.update_bmi()
 
         # tracing
@@ -32,10 +38,17 @@ class App(ctk.CTk):
 
         # widgets
         ResultText(self,self.bmi_string)
+        CategoryText(self, self.category_string)
         self.weight_input = WeightInput(self,self.weight_float,self.metric_bool)
         self.height_input = HeightInput(self,self.height_int,self.metric_bool)
         UnitSwitch(self,self.metric_bool)
+        ResetButton(self, self.reset)
 
+    def get_bmi_category(self, bmi_value):
+        for max_bmi, name, color in BMI_CATEGORIES:
+            if bmi_value < max_bmi:
+                return name, color
+        return None
 
     def change_units(self, *args):
         self.height_input.update_text(self.height_int.get())
@@ -47,14 +60,25 @@ class App(ctk.CTk):
         bmi_result = round(weight_kg / height_meter ** 2,2)
         self.bmi_string.set(str(bmi_result))
 
-    def change_title_bar_color(self):
+        category_name, color = self.get_bmi_category(bmi_result)
+        self.category_string.set(category_name)
+        self.configure(fg_color=color)
+        self.change_title_bar_color(color)
+
+    def change_title_bar_color(self,hex_color=GREEN):
         try:
+            dwm_color = hex_to_dwm(hex_color)
             hwnd = windll.user32.GetParent(self.winfo_id())
             windll.dwmapi.DwmSetWindowAttribute(
-                hwnd, 35, byref(c_int(TITLE_HEX_COLOR)), sizeof(c_int)
+                hwnd, 35, byref(c_int(dwm_color)), sizeof(c_int)
             )
         except Exception as e:
             print(f"Title bar color error: {e}")
+
+    def reset(self):
+        self.metric_bool.set(DEFAULT_METRIC)
+        self.height_int.set(DEFAULT_HEIGHT_CM)
+        self.weight_float.set(DEFAULT_WEIGHT_KG)
 
     def run(self):
         self.mainloop()
@@ -63,12 +87,12 @@ class ResultText(ctk.CTkLabel):
     def __init__(self, parent, bmi_string):
         font = ctk.CTkFont(family=FONT,size=MAIN_TEXT_SIZE,weight='bold')
         super().__init__(master=parent,font = font,text_color=WHITE,textvariable = bmi_string)
-        self.grid(column=0, row=0,rowspan=2, sticky='nsew')
+        self.grid(column=0, row=1, sticky='sew')
 
 class WeightInput(ctk.CTkFrame):
     def __init__(self, parent,weight_float,metric_bool):
         super().__init__(master = parent, fg_color=WHITE)
-        self.grid(column=0, row=2, sticky='nsew',padx=10, pady=10)
+        self.grid(column=0, row=3, sticky='nsew', padx=10, pady=10)
         self.weight_float = weight_float
         self.metric_bool = metric_bool
 
@@ -128,7 +152,7 @@ class WeightInput(ctk.CTkFrame):
 class HeightInput(ctk.CTkFrame):
     def __init__(self, parent,height_int,metric_bool):
         super().__init__(master = parent,fg_color=WHITE)
-        self.grid(row=3,column=0,sticky='nsew',padx=10, pady=10)
+        self.grid(row=4, column=0, sticky='nsew', padx=10, pady=10)
         self.metric_bool =metric_bool
 
         # widgets
@@ -161,9 +185,37 @@ class HeightInput(ctk.CTkFrame):
             feet, inches = divmod(amount / CM_PER_INCH, INCHES_PER_FOOT )
             self.output_string.set(f'{int(feet)}\'{int(inches)}"')
 
+class CategoryText(ctk.CTkLabel):
+    def __init__(self, parent, category_string):
+        font = ctk.CTkFont(family=FONT, size=CATEGORY_FONT_SIZE, weight='bold')
+        super().__init__(
+            master=parent,
+            font=font,
+            text_color=WHITE,
+            textvariable=category_string
+        )
+        self.grid(column=0, row=2, sticky='new', pady=(0, 20))
+
+class ResetButton(ctk.CTkLabel):
+    def __init__(self, parent, reset_function):
+        font = ctk.CTkFont(family=FONT, size=SWITCH_FONT_SIZE, weight='bold')
+        super().__init__(
+            master=parent,
+            text='reset',
+            text_color=DARK_GREEN,
+            font=font
+        )
+        self.place(relx=0.02, rely=0.01, anchor='nw')
+
+        self.bind('<Button>', lambda event: reset_function())
+
 class UnitSwitch(ctk.CTkLabel):
     def __init__(self, parent,metric_bool):
-        super().__init__(master = parent,text='metric',text_color=DARK_GREEN,font = ctk.CTkFont(family=FONT,size=SWITCH_FONT_SIZE,weight='bold'))
+        super().__init__(
+            master = parent,
+            text='metric',
+            text_color=DARK_GREEN,
+            font = ctk.CTkFont(family=FONT,size=SWITCH_FONT_SIZE,weight='bold'))
         self.place(relx=0.98, rely=0.01, anchor='ne')
 
         self.metric_bool = metric_bool
