@@ -19,7 +19,6 @@ class App(ctk.CTk):
 
         # Grid layout: 1 column, 5 rows
         self.columnconfigure(0, weight=1)
-        self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1, uniform='a')  # reset/metric buttons
         self.rowconfigure(1, weight=3, uniform='a')  # BMI value
         self.rowconfigure(2, weight=1, uniform='a')  # Category
