@@ -8,7 +8,7 @@ DIRECTIONS = {'left': [-1,0], 'right': [1,0], 'up': [0,-1], 'down': [0,1]}
 REFRESH_SPEED = 250
 
 # field limits
-LEFT_LIMIT = -1
+LEFT_LIMIT = 0
 TOP_LIMIT = 0
 RIGHT_LIMIT = FIELDS[0]
 BOTTOM_LIMIT = FIELDS[1]
