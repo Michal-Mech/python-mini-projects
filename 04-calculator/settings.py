@@ -26,11 +26,11 @@ NUM_POSITIONS = {
 	9: {'col': 2, 'row': 3, 'span': 1}}
 
 MATH_POSITIONS = {
-	'/': {'col': 3, 'row': 2, 'character':'',  'operator':'/', 'image path': {'light': 'images/divide_light.png', 'dark': 'images/divide_dark.png'}},
-	'*': {'col': 3, 'row': 3, 'character':'x', 'operator':'*', 'image path': None},
-	'-': {'col': 3, 'row': 4, 'character':'-', 'operator':'-', 'image path': None},
-	'=': {'col': 3, 'row': 6, 'character':'=', 'operator':'=', 'image path': None},
-	'+': {'col': 3, 'row': 5, 'character':'+', 'operator':'+', 'image path': None},
+	'/': {'col': 3, 'row': 2, 'character':'',  'image path': {'light': 'images/divide_light.png', 'dark': 'images/divide_dark.png'}},
+	'*': {'col': 3, 'row': 3, 'character':'x', 'image path': None},
+	'-': {'col': 3, 'row': 4, 'character':'-', 'image path': None},
+	'=': {'col': 3, 'row': 6, 'character':'=', 'image path': None},
+	'+': {'col': 3, 'row': 5, 'character':'+', 'image path': None},
 	}
 
 OPERATORS = {
