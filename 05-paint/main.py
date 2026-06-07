@@ -18,7 +18,7 @@ class App(ctk.CTk):
 
         #widgets
         DrawingArea(self,self.color_string,self.brush_float)
-        ToolPanel(self,self.brush_float)
+        ToolPanel(self,self.brush_float,self.color_string)
 
         # mousewheel event
         self.bind('<MouseWheel>',self.adjust_brush_size)
