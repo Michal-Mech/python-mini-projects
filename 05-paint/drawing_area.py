@@ -28,7 +28,7 @@ class DrawingArea(Canvas):
             self.old_y = event.y
 
     def create_canvas_line(self,start,end):
-        line_size = self.brush_float.get() * 10 ** 2
+        line_size = self.brush_float.get() * 8 ** 2
         self.create_line(start,end,fill='black',width=line_size,capstyle='round')
 
     def activate_draw(self,event):
