@@ -10,8 +10,13 @@ class App(ctk.CTk):
         self.iconbitmap('images/empty.ico')
         ctk.set_appearance_mode('light')
 
+        # data
+        self.color_string = ctk.StringVar(value='000')
+        self.brush_float = ctk.DoubleVar(value = 0.2)
+
+
         #widgets
-        DrawingArea(self)
+        DrawingArea(self,self.color_string,self.brush_float)
 
 
     def run(self):
