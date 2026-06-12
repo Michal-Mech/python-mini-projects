@@ -14,11 +14,13 @@ class App(ctk.CTk):
         # data
         self.color_string = ctk.StringVar(value='000')
         self.brush_float = ctk.DoubleVar(value = 0.2)
+        self.erase_bool = ctk.BooleanVar()
 
 
         #widgets
-        DrawingArea(self,self.color_string,self.brush_float)
-        ToolPanel(self,self.brush_float,self.color_string)
+        self.draw_area = DrawingArea(self,self.color_string,self.brush_float,self.erase_bool)
+        ToolPanel(self,self.brush_float,self.color_string,self.erase_bool, self.clear_canvas)
+        self.erase_bool.set(False)
 
         # mousewheel event
         self.bind('<MouseWheel>',self.adjust_brush_size)
@@ -32,6 +34,9 @@ class App(ctk.CTk):
 
         new_brush_size = max(0.2,min(1,new_brush_size))
         self.brush_float.set(new_brush_size)
+
+    def clear_canvas(self):
+        self.draw_area.delete('all')
 
 if __name__ == '__main__':
     app = App()

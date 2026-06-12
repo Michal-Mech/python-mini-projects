@@ -10,10 +10,10 @@ COLOR_COLS = len(COLORS[0])
 COLOR_ROWS = len(COLORS)
 
 # UI color
-CANVS_BG = 'white'
-BUTTON_COLOR = 'gray'
+CANVAS_BG = 'white'
+BUTTON_COLOR = '#dbdbdb'
 BUTTON_HOVER_COLOR = 'gray'
-BUTTON_ACTIVE_COLOR = '#dbdbdb'
+BUTTON_ACTIVE_COLOR = 'gray'
 BRUSH_PREVIEW_BG = '#ebebeb'
 SLIDER_RED = '#E00'
 SLIDER_GREEN = '#0E0'

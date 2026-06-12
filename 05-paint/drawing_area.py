@@ -2,14 +2,15 @@ from tkinter import Canvas
 from settings import *
 
 class DrawingArea(Canvas):
-    def __init__(self,parent,color_string,brush_float):
-        super().__init__(master=parent,background=CANVS_BG,bd=0,highlightthickness=0,relief='ridge')
+    def __init__(self,parent,color_string,brush_float,erase_bool):
+        super().__init__(master=parent,background=CANVAS_BG,bd=0,highlightthickness=0,relief='ridge')
         self.pack(expand=True,fill='both')
 
         # data
         self.color_string = color_string
         self.brush_float = brush_float
         self.allow_draw = False
+        self.erase_bool = erase_bool
 
         #start pos
         self.old_x = None
@@ -29,7 +30,8 @@ class DrawingArea(Canvas):
 
     def create_canvas_line(self,start,end):
         line_size = self.brush_float.get() * 8 ** 2
-        self.create_line(start,end,fill = f'#{self.color_string.get()}',width=line_size,capstyle='round')
+        color = f'#{self.color_string.get()}' if not self.erase_bool.get() else '#FFF'
+        self.create_line(start, end, fill=color, width=line_size, capstyle='round')
 
     def activate_draw(self,event):
         self.allow_draw = True
