@@ -29,7 +29,7 @@ class DrawingArea(Canvas):
             self.old_y = event.y
 
     def create_canvas_line(self,start,end):
-        line_size = self.brush_float.get() * 8 ** 2
+        line_size = self.brush_float.get() * MAX_BRUSH_SIZE
         color = f'#{self.color_string.get()}' if not self.erase_bool.get() else '#FFF'
         self.create_line(start, end, fill=color, width=line_size, capstyle='round')
 

@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from settings import *
 from PIL import Image
+from tkinter import Canvas
 
 class ToolPanel(ctk.CTkToplevel):
     def __init__(self,parent,brush_float, color_string,erase_bool,clear_canvas):
@@ -27,10 +28,52 @@ class ToolPanel(ctk.CTkToplevel):
         DrawBrushButton(self,erase_bool)
         EraserButton(self,erase_bool)
         ClearAllButton(self,clear_canvas,erase_bool)
+        BrushPreview(self,color_string,brush_float,erase_bool)
 
 
     def close_app(self):
         self.parent.quit()
+
+class BrushPreview(Canvas):
+    def __init__(self, parent, color_string, brush_float, erase_bool):
+        super().__init__(master = parent,background=BRUSH_PREVIEW_BG,bd = 0, highlightthickness= 0, relief= 'ridge')
+        self.grid(row = 0, column = 1,columnspan = 2,sticky='nsew')
+
+        self.color_string = color_string
+        self.brush_float = brush_float
+        self.erase_bool = erase_bool
+
+        self.x = 0
+        self.y = 0
+        self.max_length = 0
+
+        self.brush_float.trace_add('write', self.update)
+        self.color_string.trace_add('write', self.update)
+        self.erase_bool.trace_add('write', self.update)
+
+        self.bind('<Configure>',self.setup)
+
+    def setup(self,event):
+        self.x = event.width / 2
+        self.y = event.height /2
+        self.max_length = (event.height / 2) * 0.8
+        self.update()
+
+    def update(self,*args):
+        self.delete('all')
+        current_radius = self.max_length * self.brush_float.get()
+        color = f'#{self.color_string.get()}' if not self.erase_bool.get() else BRUSH_PREVIEW_BG
+        outline_color = f'#{self.color_string.get()}' if not self.erase_bool.get() else 'black'
+        self.create_oval(
+            self.x - current_radius,
+            self.y - current_radius,
+            self.x + current_radius,
+            self.y + current_radius,
+            fill = color,
+            outline = outline_color,
+            dash = 20
+        )
+
 
 class ColorSliderPanel(ctk.CTkFrame):
     def __init__(self,parent,color_string,erase_bool):
@@ -42,7 +85,7 @@ class ColorSliderPanel(ctk.CTkFrame):
         self.r_int = ctk.IntVar(value = self.color_string.get()[0])
         self.g_int = ctk.IntVar(value = self.color_string.get()[1])
         self.b_int = ctk.IntVar(value = self.color_string.get()[2])
-        self.color_string.trace('w',self.set_color)
+        self.color_string.trace_add('write',self.set_color)
         self.erase_bool = erase_bool
 
         # layout
@@ -126,7 +169,7 @@ class DrawBrushButton(Button):
     def __init__(self,parent,erase_bool):
         super().__init__(parent=parent,image_path= 'images/brush.png',col=0,func = self.activate_paint)
         self.erase_bool = erase_bool
-        self.erase_bool.trace('w', self.update_state)
+        self.erase_bool.trace_add('write', self.update_state)
 
     def activate_paint(self):
         self.erase_bool.set(False)
@@ -141,7 +184,7 @@ class EraserButton(Button):
     def __init__(self, parent,erase_bool):
         super().__init__(parent=parent, image_path='images/eraser.png', col=1,func = self.activate_erase)
         self.erase_bool = erase_bool
-        self.erase_bool.trace('w',self.update_state)
+        self.erase_bool.trace_add('write', self.update_state)
 
     def activate_erase(self):
         self.erase_bool.set(True)
