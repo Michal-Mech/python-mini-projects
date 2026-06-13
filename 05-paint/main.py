@@ -1,4 +1,6 @@
 import customtkinter as ctk
+from tkinter import filedialog
+from PIL import ImageGrab
 from drawing_area import DrawingArea
 from tools import ToolPanel
 
@@ -19,7 +21,7 @@ class App(ctk.CTk):
 
         #widgets
         self.draw_area = DrawingArea(self,self.color_string,self.brush_float,self.erase_bool)
-        ToolPanel(self,self.brush_float,self.color_string,self.erase_bool, self.clear_canvas)
+        self.tool_panel = ToolPanel(self, self.brush_float, self.color_string, self.erase_bool,self.clear_canvas, self.save_canvas)
         self.erase_bool.set(False)
 
         # mousewheel event
@@ -37,6 +39,32 @@ class App(ctk.CTk):
 
     def clear_canvas(self):
         self.draw_area.delete('all')
+
+    def save_canvas(self):
+        file_path = filedialog.asksaveasfilename(
+            defaultextension='.png',
+            filetypes=[
+                ('PNG image', '*.png'),
+                ('JPEG image', '*.jpg'),
+                ('All files', '*.*'),
+            ]
+        )
+
+        if not file_path:
+            return
+
+        self.tool_panel.withdraw()
+        self.update()
+        self.after(500)
+
+        x = self.draw_area.winfo_rootx()
+        y = self.draw_area.winfo_rooty()
+        width = self.draw_area.winfo_width()
+        height = self.draw_area.winfo_height()
+
+        image = ImageGrab.grab(bbox=(x, y, x + width, y + height))
+        self.tool_panel.deiconify()
+        image.save(file_path)
 
 if __name__ == '__main__':
     app = App()

@@ -4,9 +4,9 @@ from PIL import Image
 from tkinter import Canvas
 
 class ToolPanel(ctk.CTkToplevel):
-    def __init__(self,parent,brush_float, color_string,erase_bool,clear_canvas):
+    def __init__(self,parent,brush_float, color_string,erase_bool,clear_canvas,save_canvas):
         super().__init__()
-        self.geometry('200x300')
+        self.geometry('200x350')
         self.title('')
         self.resizable(False,False)
         self.iconbitmap('images/empty.ico')
@@ -20,6 +20,7 @@ class ToolPanel(ctk.CTkToplevel):
         self.rowconfigure(0,weight=2,uniform='a')
         self.rowconfigure(1,weight=3,uniform='a')
         self.rowconfigure((2,3),weight=1,uniform='a')
+        self.rowconfigure(4, weight=1, uniform='a')
 
         # widgets
         ColorSliderPanel(self,color_string,erase_bool)
@@ -29,6 +30,7 @@ class ToolPanel(ctk.CTkToplevel):
         EraserButton(self,erase_bool)
         ClearAllButton(self,clear_canvas,erase_bool)
         BrushPreview(self,color_string,brush_float,erase_bool)
+        SaveButton(self, save_canvas)
 
 
     def close_app(self):
@@ -204,3 +206,15 @@ class ClearAllButton(Button):
     def clear_all(self):
         self.clear_canvas()
         self.erase_bool.set(False)
+
+class SaveButton(ctk.CTkButton):
+    def __init__(self, parent, save_canvas):
+        super().__init__(
+            master=parent,
+            command=save_canvas,
+            text='Save as PNG',
+            fg_color=BUTTON_COLOR,
+            hover_color=BUTTON_HOVER_COLOR,
+            text_color='black'
+        )
+        self.grid(row=4, column=0, columnspan=3, sticky='nsew', pady=5, padx=5)
